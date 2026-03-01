@@ -26,7 +26,6 @@ router.post("/", async (req, res) => {
 });
 
 // Put - edit
-// Put - edit
 router.put("/:id", async (req, res) => {
   try {
 
@@ -65,5 +64,23 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 })
+
+//Delete
+router.delete("/:id", async (req, res) => {
+
+  try {
+  const deletedNote = await Note.findByIdAndDelete(req.params.id);
+
+  if(!deletedNote){
+    return res.status(404).json({message: "Note not found"})
+  }
+  
+  res.status(200).json({message: "Note Deleted successfully"})
+
+} catch(err) {
+  res.status(500).json({message: err.message});
+}
+
+} ) 
 
 module.exports = router;
