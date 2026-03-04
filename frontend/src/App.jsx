@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 function App() {
+ 
+  const [notes, setNotes] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="h-screen w-screen bg-yellow-200">
       
@@ -10,7 +14,9 @@ function App() {
         {/* Add Note Section */}
         <div className="flex items-center gap-4 mb-10">
           
-          <button className=" cursor-pointer w-12 h-12 bg-yellow-100 border border-yellow-400 rounded-lg flex items-center justify-center text-2xl shadow-md hover:scale-105 transition">
+          <button 
+          onClick={() => setShowModal(true)}
+          className=" cursor-pointer w-12 h-12 bg-yellow-100 border border-yellow-400 rounded-lg flex items-center justify-center text-2xl shadow-md hover:scale-105 transition">
             +
           </button>
 
@@ -21,19 +27,23 @@ function App() {
         </div>
 
         {/* Sticky Notes Grid */}
-        <div className="grid grid-cols-4 gap-10">
-          
-          <div className="h-40 rounded-lg bg-red-200 shadow-md cursor-pointer hover:scale-105 transition"></div>
-          <div className="h-40 rounded-lg bg-green-200 shadow-md cursor-pointer hover:scale-105 transition"></div>
-          <div className="h-40 rounded-lg bg-blue-200 shadow-md cursor-pointer hover:scale-105 transition"></div>
-          <div className="h-40 rounded-lg bg-stone-200 shadow-md cursor-pointer hover:scale-105 transition"></div>
 
-          <div className="h-40 rounded-lg bg-teal-700 shadow-md cursor-pointer hover:scale-105 transition"></div>
-          <div className="h-40 rounded-lg bg-yellow-400 shadow-md cursor-pointer hover:scale-105 transition"></div>
-          <div className="h-40 rounded-lg bg-orange-500 shadow-md cursor-pointer hover:scale-105 transition"></div>
-          <div className="h-40 rounded-lg bg-orange-600 shadow-md cursor-pointer hover:scale-105 transition"></div>
+        {showModal && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+    <div className="bg-white w-96 p-6 rounded-xl shadow-xl">
+      <h2 className="text-xl font-bold mb-4">Add Note</h2>
+    </div>
+  </div>
+)}
 
-        </div>
+        {notes.map((note) => (
+  <div key={note.id} className="h-40 rounded-lg bg-yellow-200 p-4 shadow-md">
+    <h3 className="font-bold">{note.title}</h3>
+    <p className="text-sm mt-2">{note.content}</p>
+  </div>
+))}
+
+
 
       </div>
     </div>
