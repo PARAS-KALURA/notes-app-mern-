@@ -10,7 +10,7 @@ function App() {
   const saveNote = () => {
 
    if(title.trim() === "" || content.trim() === "") {
-    alert("Please fill in both title and content.");
+    alert("Please filll in both title and content.");
     return;
    }
 
