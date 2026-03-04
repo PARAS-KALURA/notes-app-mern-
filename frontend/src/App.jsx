@@ -9,13 +9,18 @@ function App() {
 
   const saveNote = () => {
 
+   if(title.trim() === "" || content.trim() === "") {
+    alert("Please fill in both title and content.");
+    return;
+   }
+
     const newNote = {
       id: Date.now(),
       title: title,
       content: content
     };
 
-    setNotes([...notes, newNote]);
+    setNotes([...notes, newNote]); // copy old notes + add new note
     setShowModal(false);
 
     setTitle("");
