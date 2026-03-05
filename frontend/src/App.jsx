@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+const API = "http://localhost:3000/api/notes";
 
 function App() {
 
@@ -8,6 +11,13 @@ function App() {
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState(null);
 
+  // FETCH NOTES
+  useEffect(() => {
+    axios.get(API)
+      .then((res) => setNotes(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
   // SAVE OR UPDATE NOTE
   const handleSaveNote = () => {
 
@@ -16,28 +26,33 @@ function App() {
       return;
     }
 
+    // UPDATE NOTE
     if (editingId) {
 
-      // UPDATE NOTE
-      const updatedNotes = notes.map((note) =>
-        note.id === editingId
-          ? { ...note, title, content }
-          : note
-      );
-
-      setNotes(updatedNotes);
-      setEditingId(null);
+      axios.put(`${API}/${editingId}`, {
+        title,
+        content
+      })
+      .then((res) => {
+        setNotes(notes.map(note =>
+          note._id === editingId ? res.data : note
+        ));
+        setEditingId(null);
+      })
+      .catch((err) => console.log(err));
 
     } else {
 
-      // CREATE NEW NOTE
-      const newNote = {
-        id: Date.now(),
+      // CREATE NOTE
+      axios.post(API, {
         title,
         content
-      };
+      })
+      .then((res) => {
+        setNotes([res.data, ...notes]);
+      })
+      .catch((err) => console.log(err));
 
-      setNotes([...notes, newNote]);
     }
 
     setTitle("");
@@ -47,15 +62,18 @@ function App() {
 
   // DELETE NOTE
   const deleteNote = (id) => {
-    const updatedNotes = notes.filter(note => note.id !== id);
-    setNotes(updatedNotes);
+    axios.delete(`${API}/${id}`)
+      .then(() => {
+        setNotes(notes.filter(note => note._id !== id));
+      })
+      .catch((err) => console.log(err));
   };
 
   // EDIT NOTE
   const handleEdit = (note) => {
     setTitle(note.title);
     setContent(note.content);
-    setEditingId(note.id);
+    setEditingId(note._id);
     setShowModal(true);
   };
 
@@ -130,8 +148,8 @@ function App() {
           {notes.map((note) => (
 
             <div
-              key={note.id}
-              className="cursor-pointer h-40 rounded-lg bg-yellow-200 p-4 shadow-md hover:scale-105 transition flex flex-col justify-between"
+              key={note._id}
+              className="cursor-pointer h-40 rounded-lg bg-yellow-200 p-4 shadow-md hover:scale-105 transition flex flex-col justify-between overflow-hidden"
             >
 
               <div>
@@ -149,7 +167,7 @@ function App() {
                 </button>
 
                 <button
-                  onClick={() => deleteNote(note.id)}
+                  onClick={() => deleteNote(note._id)}
                   className="cursor-pointer text-sm px-2 py-1 bg-red-700 text-white rounded hover:scale-105 transition"
                 >
                   Delete
